@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge Solar IA</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+    <img src="logo.png" alt="Edge Solar IA" class="logo-img">
+</div>
+        <nav>
+            <a href="#" class="active">Inicio</a>
+            <a href="#">Datos en vivo</a>
+            <a href="#">Historial</a>
+            <a href="#">Reportes</a>
+            <a href="#">Configuración</a>
+        </nav>
+        <div class="user-info">
+            <span class="date-text" id="current-date">📅 Cargando fecha...</span>
+            <div class="user-avatar">👤</div>
+        </div>
+    </header>
+
+    <main>
+        <div class="title-section">
+            <h1>Termómetro</h1>
+            <p>Monitoreo de temperatura en tiempo real</p>
+        </div>
+
+        <div class="dashboard-container">
+            <div class="card ambient">
+                <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <div class="card-title">Temperatura ambiente</div>
+                <div class="temperature-value"><span id="temp-ambiente">--.-</span><span>°C</span></div>
+                <div class="card-footer">
+                    <span>≈</span> Cd. Juárez, Chih.
+                </div>
+            </div>
+
+            <div class="thermometer-wrapper">
+                <div class="thermometer-body">
+                    <div class="thermometer-mercury" id="mercurio-barra" style="height: 0%;"></div>
+                    <div class="thermometer-bulb"></div>
+                </div>
+                <div class="scale-container">
+                    <div class="scale-mark"><div class="scale-line"></div> 80 °C</div>
+                    <div class="scale-mark"><div class="scale-line"></div> 60 °C</div>
+                    <div class="scale-mark"><div class="scale-line"></div> 40 °C</div>
+                    <div class="scale-mark"><div class="scale-line"></div> 20 °C</div>
+                    <div class="scale-mark"><div class="scale-line"></div> 0 °C</div>
+                </div>
+            </div>
+
+            <div class="card solar">
+                <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="2" y="7" width="20" height="12" rx="1"></rect>
+                    <path d="M12 7v12M2 13h20M6 7l3 12M18 7l-3 12"></path>
+                    <path d="M12 2v2M7 3l1 1M17 3l-1 1"></path>
+                </svg>
+                <div class="card-title">Temperatura del panel solar</div>
+                <div class="temperature-value"><span id="temp-panel">--.-</span><span>°C</span></div>
+                <div class="card-footer">
+                    <span>🌡️</span> Superficie del panel
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        🕒 Última actualización: <span id="last-update" class="highlight">Hace unos instantes</span>
+    </footer>
+
+    <script>
+    // --- Configuración Clima Juárez (Open-Meteo) ---
+    const LATITUD = "31.7387";
+    const LONGITUD = "-106.4850";
+    const API_CLIMA = `https://api.open-meteo.com/v1/forecast?latitude=${LATITUD}&longitude=${LONGITUD}&current=temperature_2m&timezone=auto`;
+
+    // --- Configuración ThingSpeak (Panel Solar / ESP32) ---
+    const CHANNEL_ID = "3449811"; 
+    const API_THINGSPEAK = `https://api.thingspeak.com/channels/${CHANNEL_ID}/fields/1/last.json`;
+
+    async function actualizarDashboard() {
+        try {
+            // 1. OBTENER CLIMA AMBIENTE EN TIEMPO REAL
+            const respClima = await fetch(API_CLIMA);
+            if (respClima.ok) {
+                const datosClima = await respClima.json();
+                const tempAmbiente = datosClima.current.temperature_2m;
+                document.getElementById("temp-ambiente").innerText = tempAmbiente.toFixed(1);
+            }
+
+            // 2. OBTENER TEMPERATURA DEL PANEL DESDE THINGSPEAK
+            const respPanel = await fetch(API_THINGSPEAK);
+            
+            if (respPanel.ok) {
+                const datosPanel = await respPanel.json();
+                const tempPanelVal = parseFloat(datosPanel.field1);
+
+                // Validar que exista el dato, no sea nulo, no sea NaN y sea DIFERENTE de -1
+                if (!isNaN(tempPanelVal) && tempPanelVal !== -1 && datosPanel.field1 !== null) {
+                    
+                    // Mostrar valor real en pantalla
+                    document.getElementById("temp-panel").innerText = tempPanelVal.toFixed(1);
+
+                    // Mover el mercurio (Escala de 0 a 80 °C)
+                    let porcentajeAltura = (tempPanelVal / 80) * 100;
+                    if (porcentajeAltura > 100) porcentajeAltura = 100;
+                    if (porcentajeAltura < 0) porcentajeAltura = 0;
+
+                    document.getElementById("mercurio-barra").style.height = `${porcentajeAltura}%`;
+                } else {
+                    // Si ThingSpeak todavía responde -1 o nulo (sin lecturas del ESP32):
+                    document.getElementById("temp-panel").innerText = "--.-";
+                    document.getElementById("mercurio-barra").style.height = "0%";
+                }
+            }
+
+            // 3. ACTUALIZAR ESTAMPA DE TIEMPO
+            const ahora = new Date();
+            document.getElementById("last-update").innerText = `Hoy a las ${ahora.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+
+        } catch (error) {
+            console.error("Error al consultar APIs:", error);
+            document.getElementById("temp-panel").innerText = "Err";
+            document.getElementById("mercurio-barra").style.height = "0%";
+        }
+    }
+
+    function actualizarFechaNavbar() {
+        const opciones = { day: 'numeric', month: 'long', year: 'numeric' };
+        const ahora = new Date();
+        const fechaFormato = ahora.toLocaleDateString('es-ES', opciones);
+        const horaFormato = ahora.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: true });
+        document.getElementById("current-date").innerText = `📅 ${fechaFormato} | ${horaFormato.toUpperCase()}`;
+    }
+
+    // Inicialización
+    actualizarFechaNavbar();
+    actualizarDashboard();
+    
+    // Consultar automáticamente cada 15 segundos
+    setInterval(actualizarDashboard, 15000); 
+</script>
+</body>
+</html>

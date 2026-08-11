@@ -1,0 +1,345 @@
+/* --- Variables Globales y Paleta --- */
+:root {
+    --bg-color: #060b13;
+    --card-bg: rgba(10, 20, 38, 0.5);
+    --text-main: #ffffff;
+    --text-muted: #8fa0dd;
+    --blue-accent: #0072ff;
+    --orange-accent: #ff7b00;
+    --border-blue: rgba(0, 114, 255, 0.4);
+    --border-orange: rgba(255, 123, 0, 0.4);
+}
+
+/* --- Reseteo Base --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+/* --- Navbar / Header --- */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 40px;
+    width: 100%;
+    gap: 20px;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+/* Estilo para el nuevo logo en imagen */
+.logo-img {
+    height: 150px;       /* Ajusta esta altura para cambiar el tamaño del logo */
+    width: auto;        /* Mantiene la proporción de la imagen sin deformarla */
+    display: block;
+}
+
+.logo-icon {
+    color: var(--blue-accent);
+    font-weight: 900;
+    font-style: italic;
+}
+
+.logo-sub {
+    color: var(--orange-accent);
+    font-size: 0.8rem;
+    display: block;
+    margin-top: -4px;
+}
+
+nav {
+    display: flex;
+    gap: 25px;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 8px 24px;
+    border-radius: 8px;
+}
+
+nav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+}
+
+nav a.active, nav a:hover {
+    color: var(--text-main);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* --- Estructura Principal --- */
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 0;
+}
+
+.title-section {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.title-section h1 {
+    font-size: 2.2rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.title-section p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+/* --- Contenedor Grid (Responsivo por defecto) --- */
+.dashboard-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px;
+    width: 100%;
+    align-items: center;
+}
+
+/* --- Tarjetas (Cards) --- */
+.card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 40px 30px;
+    height: 420px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    backdrop-filter: blur(10px);
+}
+
+.card.ambient {
+    border: 1.5px solid var(--border-blue);
+    box-shadow: inset 0 0 20px rgba(0, 114, 255, 0.05);
+}
+
+.card.solar {
+    border: 1.5px solid var(--border-orange);
+    box-shadow: inset 0 0 20px rgba(255, 123, 0, 0.05);
+}
+
+.card-icon {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 10px;
+}
+
+.ambient .card-icon { color: var(--blue-accent); }
+.solar .card-icon { color: var(--orange-accent); }
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
+.ambient .card-title { color: var(--blue-accent); }
+.solar .card-title { color: var(--orange-accent); }
+
+.temperature-value {
+    font-size: 4.5rem;
+    font-weight: 400;
+    margin-bottom: auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.temperature-value span {
+    font-size: 2rem;
+    margin-top: 12px;
+    margin-left: 5px;
+}
+
+.card-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    padding-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* --- Termómetro --- */
+.thermometer-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    height: 100%;
+    min-height: 340px;
+}
+
+.thermometer-body {
+    width: 36px;
+    height: 340px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px 20px 0 0;
+    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    padding: 4px;
+}
+
+.thermometer-bulb {
+    width: 56px;
+    height: 56px;
+    background: #0072ff;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    position: absolute;
+    bottom: -40px;
+    z-index: 1;
+}
+
+.thermometer-mercury {
+    width: 100%;
+    height: 76%; /* Controla la altura visual del termómetro */
+    background: linear-gradient(to top, #0072ff, #ffaa00, #ff4500);
+    border-radius: 14px 14px 0 0;
+    position: relative;
+    z-index: 2;
+}
+
+.scale-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 330px; /* Ajustado sutilmente para cuadrar con los 80°C */
+    padding-bottom: 5px;
+}
+
+.scale-mark {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    height: 0;
+}
+
+.scale-line {
+    width: 12px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* --- Footer --- */
+footer {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    padding: 20px 0;
+}
+
+footer .highlight {
+    color: #0072ff;
+}
+
+/* =======================================================
+   MEDIA QUERIES (Ajustes de Adaptabilidad/Responsivos)
+   ======================================================= */
+
+/* Para Pantallas Medianas y Tablets (Menor a 1024px) */
+@media (max-width: 1024px) {
+    header {
+        padding: 10px 20px;
+    }
+    
+    .dashboard-container {
+        gap: 20px;
+    }
+}
+
+/* Para Teléfonos Inteligentes (Menor a 768px) */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+
+    nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        width: 100%;
+    }
+
+    .user-info {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .dashboard-container {
+        grid-template-columns: 1fr; /* Fuerza una sola columna vertical */
+        gap: 35px;
+    }
+
+    .card {
+        height: auto; /* Permite que la tarjeta crezca si es necesario */
+        padding: 30px 20px;
+    }
+    
+    .thermometer-wrapper {
+        margin: 30px 0;
+        order: -1; /* Mueve el termómetro arriba en teléfonos (opcional) */
+    }
+}
