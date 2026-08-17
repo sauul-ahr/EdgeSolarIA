@@ -1,0 +1,421 @@
+/* --- Variables de Color y Estilo --- */
+:root {
+    --bg-color: #060b13;
+    --card-bg: rgba(10, 20, 38, 0.5);
+    --text-main: #ffffff;
+    --text-muted: #8fa0dd;
+    --blue-accent: #0072ff;
+    --orange-accent: #ff7b00;
+    --green-accent: #00ffcc;
+    --border-blue: rgba(0, 114, 255, 0.4);
+    --border-orange: rgba(255, 123, 0, 0.4);
+}
+
+/* --- Reseteo Global y Ajuste Pantalla Completa --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+html, body {
+    height: 100vh;
+    overflow-y: auto;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px 25px;
+}
+
+/* --- Header / Barra Superior con Menú Centrado --- */
+header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 5px 10px;
+    width: 100%;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.logo-img {
+    height: 50px;
+    width: auto;
+    display: block;
+}
+
+nav {
+    display: flex;
+    gap: 20px;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 6px 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+nav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.3s;
+    cursor: pointer;
+}
+
+nav a.active, nav a:hover {
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.user-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* --- Secciones --- */
+.content-section {
+    display: none;
+    width: 100%;
+}
+
+.content-section.active-section {
+    display: block;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
+}
+
+.title-section {
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.title-section h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.title-section p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* --- Cards de Control e Indicadores --- */
+.control-banner {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+    margin-bottom: 15px;
+    justify-content: center;
+}
+
+.status-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 12px 20px;
+    flex: 1;
+    max-width: 500px;
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.status-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.status-value {
+    font-size: 3.2rem;
+    font-weight: 800;
+    color: var(--green-accent);
+    line-height: 1.1;
+    letter-spacing: -1px;
+}
+
+.fan-indicator-container {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 4px 0;
+}
+
+.led-indicator {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.led-indicator.on {
+    background-color: #00ffcc;
+    box-shadow: 0 0 16px #00ffcc;
+}
+
+.led-indicator.off {
+    background-color: #ff3366;
+    box-shadow: 0 0 8px #ff3366;
+}
+
+.status-text {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.status-card small {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    margin-top: 2px;
+}
+
+/* --- Dashboard Principal --- */
+.dashboard-container {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 25px;
+    width: 100%;
+    align-items: center;
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 20px 20px;
+    height: 270px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    backdrop-filter: blur(10px);
+}
+
+.card.ambient {
+    border: 1.5px solid var(--border-blue);
+    box-shadow: inset 0 0 20px rgba(0, 114, 255, 0.05);
+}
+
+.card.solar {
+    border: 1.5px solid var(--border-orange);
+    box-shadow: inset 0 0 20px rgba(255, 123, 0, 0.05);
+}
+
+.card-icon {
+    width: 42px;
+    height: 42px;
+}
+
+.ambient .card-icon { color: var(--blue-accent); }
+.solar .card-icon { color: var(--orange-accent); }
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.ambient .card-title { color: var(--blue-accent); }
+.solar .card-title { color: var(--orange-accent); }
+
+.temperature-value {
+    font-size: 4.8rem;
+    font-weight: 800;
+    display: flex;
+    align-items: flex-start;
+    line-height: 1;
+}
+
+.temperature-value span:last-child {
+    font-size: 2.2rem;
+    margin-top: 5px;
+    margin-left: 2px;
+    color: var(--text-muted);
+}
+
+.card-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    padding-top: 8px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* --- Termómetro Optimizado --- */
+.thermometer-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    height: 260px;
+}
+
+.thermometer-body {
+    width: 32px;
+    height: 240px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px 20px 0 0;
+    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    padding: 3px;
+}
+
+.thermometer-bulb {
+    width: 48px;
+    height: 48px;
+    background: #0072ff;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    position: absolute;
+    bottom: -32px;
+    z-index: 1;
+}
+
+.thermometer-mercury {
+    width: 100%;
+    background: linear-gradient(to top, #0072ff, #ffaa00, #ff4500);
+    border-radius: 12px 12px 0 0;
+    transition: height 0.5s ease-in-out;
+    z-index: 2;
+}
+
+.scale-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 230px;
+}
+
+.scale-mark {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.scale-line {
+    width: 10px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* --- Gráfica e Historial --- */
+.chart-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border-blue);
+    border-radius: 16px;
+    padding: 20px;
+    width: 100%;
+    backdrop-filter: blur(10px);
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.btn-excel {
+    background: #107c41;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.3s;
+}
+
+.btn-excel:hover {
+    background: #0b5c30;
+}
+
+.chart-container {
+    position: relative;
+    height: 350px;
+    width: 100%;
+}
+
+.config-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 25px;
+    border-radius: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.config-card ul {
+    margin-top: 12px;
+    line-height: 1.8;
+    color: var(--text-muted);
+}
+
+footer {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    padding: 8px 0;
+}
+
+footer .highlight { color: #0072ff; }
+
+/* Responsive para pantallas pequeñas */
+@media (max-height: 700px) {
+    .card { height: 230px; }
+    .thermometer-wrapper { height: 220px; }
+    .status-value { font-size: 2.6rem; }
+    .status-text { font-size: 1.8rem; }
+    .temperature-value { font-size: 3.8rem; }
+}

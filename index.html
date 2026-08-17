@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Edge IA</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Chart.js para la gráfica de temperaturas -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS para exportar a Excel .xlsx directamente -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <img src="logo.png" alt="Edge Solar IA" class="logo-img">
+        </div>
+        <nav>
+            <a href="#" class="nav-link active" onclick="mostrarSeccion('inicio', this)">Inicio</a>
+            <a href="#" class="nav-link" onclick="mostrarSeccion('graficas', this)">Gráficas e Historial</a>
+            <a href="#" class="nav-link" onclick="mostrarSeccion('config', this)">Configuración</a>
+        </nav>
+        <div class="user-info">
+            <span class="date-text" id="current-date">📅 Cargando fecha...</span>
+            <div class="user-avatar">👤</div>
+        </div>
+    </header>
+
+    <main>
+        <!-- SECCIÓN 1: INICIO (DASHBOARD COMPLETO) -->
+        <section id="sec-inicio" class="content-section active-section">
+            <div class="title-section">
+                <h1>Monitoreo Solar con IA</h1>
+                <p>Lecturas en tiempo real y predicción del sistema de enfriamiento</p>
+            </div>
+
+            <!-- MÓDULOS DE CONTROL (PREDICCIÓN IA Y ESTADO DE VENTILADOR) -->
+            <div class="control-banner">
+                <div class="status-card ia-card">
+                    <div class="status-header">
+                        <span class="status-icon">🤖</span>
+                        <span>Predicción IA (1 min)</span>
+                    </div>
+                    <div class="status-value"><span id="temp-predicha">--.-</span> °C</div>
+                    <small>Regresión lineal en el borde (ESP32 Edge)</small>
+                </div>
+
+                <div class="status-card fan-card">
+                    <div class="status-header">
+                        <span class="status-icon">🌀</span>
+                        <span>Estado del Ventilador</span>
+                    </div>
+                    <div class="fan-indicator-container">
+                        <div id="fan-led" class="led-indicator off"></div>
+                        <span id="fan-status-text" class="status-text">APAGADO</span>
+                    </div>
+                    <small>Control por relé (GPIO 5)</small>
+                </div>
+            </div>
+
+            <!-- TARJETAS DE TEMPERATURA Y TERMÓMETRO -->
+            <div class="dashboard-container">
+                <div class="card ambient">
+                    <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    <div class="card-title">Temperatura ambiente</div>
+                    <div class="temperature-value"><span id="temp-ambiente">--.-</span><span>°C</span></div>
+                    <div class="card-footer">
+                        <span>≈</span> Cd. Juárez, Chih.
+                    </div>
+                </div>
+
+                <div class="thermometer-wrapper">
+                    <div class="thermometer-body">
+                        <div class="thermometer-mercury" id="mercurio-barra" style="height: 0%;"></div>
+                        <div class="thermometer-bulb"></div>
+                    </div>
+                    <div class="scale-container">
+                        <div class="scale-mark"><div class="scale-line"></div> 80 °C</div>
+                        <div class="scale-mark"><div class="scale-line"></div> 60 °C</div>
+                        <div class="scale-mark"><div class="scale-line"></div> 40 °C</div>
+                        <div class="scale-mark"><div class="scale-line"></div> 20 °C</div>
+                        <div class="scale-mark"><div class="scale-line"></div> 0 °C</div>
+                    </div>
+                </div>
+
+                <div class="card solar">
+                    <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="2" y="7" width="20" height="12" rx="1"></rect>
+                        <path d="M12 7v12M2 13h20M6 7l3 12M18 7l-3 12"></path>
+                        <path d="M12 2v2M7 3l1 1M17 3l-1 1"></path>
+                    </svg>
+                    <div class="card-title">Temperatura del panel solar</div>
+                    <div class="temperature-value"><span id="temp-panel">--.-</span><span>°C</span></div>
+                    <div class="card-footer">
+                        <span>🌡️</span> Superficie del panel
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: GRÁFICAS E HISTORIAL (CON DESCARGA EN EXCEL) -->
+        <section id="sec-graficas" class="content-section">
+            <div class="title-section">
+                <h1>Comparativa de Temperaturas</h1>
+                <p>Temperatura Ciudad Juárez vs. Temperatura Panel Solar</p>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h2>Histórico y Tendencia</h2>
+                    <button class="btn-excel" onclick="descargarExcel()">
+                        <span>📊</span> Descargar reporte en Excel (.xlsx)
+                    </button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="tempChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: CONFIGURACIÓN -->
+        <section id="sec-config" class="content-section">
+            <div class="title-section">
+                <h1>Configuración del Sistema</h1>
+                <p>Parámetros operativos del microcontrolador ESP32</p>
+            </div>
+            <div class="config-card">
+                <h3>Umbrales del Algoritmo Edge IA</h3>
+                <ul>
+                    <li><strong>Temperatura Activación Base:</strong> 35.0 °C</li>
+                    <li><strong>Predicción Preventiva IA:</strong> Proyección a 1 Minuto (60s)</li>
+                    <li><strong>Umbral Adaptativo IA:</strong> 32.5 °C - 33.5 °C (según pendiente de calentamiento)</li>
+                    <li><strong>Temperatura Desactivación (Histéresis):</strong> 30.0 °C</li>
+                    <li><strong>Intervalo de Muestreo Local:</strong> 2 Segundos</li>
+                    <li><strong>Intervalo de Envío Nube (ThingSpeak):</strong> 5 Minutos</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        🕒 Última actualización: <span id="last-update" class="highlight">Hace unos instantes</span>
+    </footer>
+
+    <script>
+    // --- API Keys y Configuración de Servicios ---
+    const LATITUD = "31.7387";
+    const LONGITUD = "-106.4850";
+    const API_CLIMA = `https://api.open-meteo.com/v1/forecast?latitude=${LATITUD}&longitude=${LONGITUD}&current=temperature_2m&timezone=auto`;
+
+    // CONFIGURACIÓN DE THINGSPEAK
+    const CHANNEL_ID = "3449811";
+    const READ_API_KEY = "P45LF4JJ74JPT5JO";
+
+    const API_THINGSPEAK_LAST = READ_API_KEY 
+        ? `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds/last.json?api_key=${READ_API_KEY}`
+        : `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds/last.json`;
+
+    const API_THINGSPEAK_FEEDS = READ_API_KEY 
+        ? `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds.json?results=15&api_key=${READ_API_KEY}`
+        : `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds.json?results=15`;
+
+    let miGrafica = null;
+    let datosHistoricos = [];
+
+    // --- Navegación entre Pestañas ---
+    function mostrarSeccion(id, elemento) {
+        document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active-section'));
+        document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+
+        document.getElementById(`sec-${id}`).classList.add('active-section');
+        elemento.classList.add('active');
+
+        if(id === 'graficas') {
+            cargarDatosGrafica();
+        }
+    }
+
+    // --- Actualización Dashboard con Control de Desconexión ---
+    async function actualizarDashboard() {
+        try {
+            // 1. Obtener clima de Ciudad Juárez (Open-Meteo)
+            const respClima = await fetch(API_CLIMA);
+            if (respClima.ok) {
+                const datosClima = await respClima.json();
+                document.getElementById("temp-ambiente").innerText = datosClima.current.temperature_2m.toFixed(1);
+            }
+
+            // 2. Obtener datos del ESP32 desde ThingSpeak
+            const respPanel = await fetch(API_THINGSPEAK_LAST);
+            if (respPanel.ok) {
+                const datos = await respPanel.json();
+                
+                if (!datos || !datos.created_at) return;
+
+                const fechaLectura = new Date(datos.created_at);
+                const ahora = new Date();
+                const diferenciaMinutos = (ahora - fechaLectura) / (1000 * 60);
+
+                const opcionesFecha = { 
+                    day: 'numeric', 
+                    month: 'long', 
+                    year: 'numeric', 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    hour12: true 
+                };
+                const ultimaConexionTexto = fechaLectura.toLocaleDateString('es-MX', opcionesFecha);
+
+                const tempPanelVal = parseFloat(datos.field1);
+                const tempPredichaVal = parseFloat(datos.field2);
+                const estadoFanVal = parseInt(datos.field3);
+
+                // SI HAN PASADO MÁS DE 15 MINUTOS SIN DATOS
+                if (diferenciaMinutos > 15) {
+                    document.getElementById("temp-panel").innerText = "--.-";
+                    document.getElementById("temp-predicha").innerText = "--.-";
+                    document.getElementById("mercurio-barra").style.height = "0%";
+                    
+                    const led = document.getElementById("fan-led");
+                    const statusText = document.getElementById("fan-status-text");
+                    led.className = "led-indicator off";
+                    statusText.innerText = "DESCONECTADO";
+                    statusText.style.color = "#8fa0dd";
+
+                    document.getElementById("last-update").innerText = `⚠️ ESP32 fuera de línea | Última transmisión: ${ultimaConexionTexto}`;
+                } 
+                // MUESTRA DE DATOS RECIENTES
+                else {
+                    if (!isNaN(tempPanelVal)) {
+                        document.getElementById("temp-panel").innerText = tempPanelVal.toFixed(1);
+                        let porcentajeAltura = (tempPanelVal / 80) * 100;
+                        porcentajeAltura = Math.max(0, Math.min(100, porcentajeAltura));
+                        document.getElementById("mercurio-barra").style.height = `${porcentajeAltura}%`;
+                    }
+
+                    if (!isNaN(tempPredichaVal)) {
+                        document.getElementById("temp-predicha").innerText = tempPredichaVal.toFixed(1);
+                    }
+
+                    const led = document.getElementById("fan-led");
+                    const statusText = document.getElementById("fan-status-text");
+                    if (estadoFanVal === 1) {
+                        led.className = "led-indicator on";
+                        statusText.innerText = "ENCENDIDO";
+                        statusText.style.color = "";
+                    } else {
+                        led.className = "led-indicator off";
+                        statusText.innerText = "APAGADO";
+                        statusText.style.color = "";
+                    }
+
+                    document.getElementById("last-update").innerText = `En línea | Última actualización: Hoy a las ${ahora.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+                }
+            }
+
+        } catch (error) {
+            console.error("Error al obtener telemetría:", error);
+        }
+    }
+
+    // --- Renderizar Gráfica Interactiva ---
+    async function cargarDatosGrafica() {
+        try {
+            const respClima = await fetch(API_CLIMA);
+            let tempAmbienteActual = 25.0;
+            if (respClima.ok) {
+                const d = await respClima.json();
+                tempAmbienteActual = d.current.temperature_2m;
+            }
+
+            const respFeeds = await fetch(API_THINGSPEAK_FEEDS);
+            if (!respFeeds.ok) return;
+            const data = await respFeeds.json();
+
+            const etiquetas = [];
+            const tempsPanel = [];
+            const tempsCiudad = [];
+            const tempsIA = [];
+
+            datosHistoricos = [];
+
+            data.feeds.forEach(feed => {
+                const fecha = new Date(feed.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                const valPanel = parseFloat(feed.field1) || 0;
+                const valIA = parseFloat(feed.field2) || 0;
+                const valFan = parseInt(feed.field3) === 1 ? "Encendido" : "Apagado";
+
+                etiquetas.push(fecha);
+                tempsPanel.push(valPanel);
+                tempsCiudad.push(tempAmbienteActual);
+                tempsIA.push(valIA);
+
+                datosHistoricos.push({
+                    Fecha_Hora: feed.created_at,
+                    Temp_Ciudad_C: tempAmbienteActual,
+                    Temp_Panel_C: valPanel,
+                    Prediccion_IA_C: valIA,
+                    Estado_Ventilador: valFan
+                });
+            });
+
+            const ctx = document.getElementById('tempChart').getContext('2d');
+            if (miGrafica) miGrafica.destroy();
+
+            miGrafica = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: etiquetas,
+                    datasets: [
+                        {
+                            label: 'Temp. Panel (°C)',
+                            data: tempsPanel,
+                            borderColor: '#ff7b00',
+                            backgroundColor: 'rgba(255, 123, 0, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Temp. Ciudad Juárez (°C)',
+                            data: tempsCiudad,
+                            borderColor: '#0072ff',
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Predicción IA (°C)',
+                            data: tempsIA,
+                            borderColor: '#00ffcc',
+                            borderDash: [2, 2],
+                            fill: false,
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#ffffff' } }
+                    },
+                    scales: {
+                        x: { ticks: { color: '#8fa0dd' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        y: { ticks: { color: '#8fa0dd' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                    }
+                }
+            });
+
+        } catch (err) {
+            console.error("Error al cargar gráfica:", err);
+        }
+    }
+
+    // --- Descarga Directa a Excel ---
+    function descargarExcel() {
+        if (datosHistoricos.length === 0) {
+            alert("No hay datos históricos disponibles para exportar.");
+            return;
+        }
+
+        const hojaTrabajo = XLSX.utils.json_to_sheet(datosHistoricos);
+        const libroTrabajo = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(libroTrabajo, hojaTrabajo, "Historial_Temperatura");
+
+        XLSX.writeFile(libroTrabajo, `Reporte_Solar_Edge_${new Date().toISOString().slice(0,10)}.xlsx`);
+    }
+
+    function actualizarFechaNavbar() {
+        const opciones = { day: 'numeric', month: 'long', year: 'numeric' };
+        const ahora = new Date();
+        const fechaFormato = ahora.toLocaleDateString('es-ES', opciones);
+        const horaFormato = ahora.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: true });
+        document.getElementById("current-date").innerText = `📅 ${fechaFormato} | ${horaFormato.toUpperCase()}`;
+    }
+
+    actualizarFechaNavbar();
+    actualizarDashboard();
+
+    // Refresco automático del dashboard cada 30 segundos en la web
+    setInterval(actualizarDashboard, 30000);
+</script>
+</body>
+</html>
