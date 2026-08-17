@@ -1,0 +1,547 @@
+/* --- Variables de Color y Estilo --- */
+:root {
+    --bg-color: #060b13;
+    --card-bg: rgba(10, 20, 38, 0.6);
+    --text-main: #ffffff;
+    --text-muted: #8fa0dd;
+    --blue-accent: #0072ff;
+    --orange-accent: #ff7b00;
+    --green-accent: #00ffcc;
+    --border-blue: rgba(0, 114, 255, 0.4);
+    --border-orange: rgba(255, 123, 0, 0.4);
+}
+
+/* --- Reseteo Global y Ajuste Pantalla --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px 15px;
+}
+
+/* --- Header Responsivo --- */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto 15px auto;
+    position: relative;
+    background: rgba(10, 20, 38, 0.4);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+}
+
+.logo-img {
+    height: 42px;
+    width: auto;
+    display: block;
+}
+
+/* Menú Navegación Escritorio */
+nav {
+    display: flex;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 6px 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+nav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+nav a.active, nav a:hover {
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-main);
+    font-size: 1.8rem;
+    cursor: pointer;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* --- Main y Secciones --- */
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
+}
+
+.content-section {
+    display: none;
+    width: 100%;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.content-section.active-section {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.title-section {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.title-section h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.title-section p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* --- Banner de Control (Cards Superiores) --- */
+.control-banner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    width: 100%;
+    margin-bottom: 20px;
+    justify-content: center;
+}
+
+.status-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 15px 20px;
+    flex: 1 1 280px;
+    max-width: 500px;
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.status-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.status-value {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: var(--green-accent);
+    line-height: 1.1;
+    letter-spacing: -1px;
+}
+
+.fan-indicator-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 6px 0;
+}
+
+.led-indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.led-indicator.on {
+    background-color: #00ffcc;
+    box-shadow: 0 0 16px #00ffcc;
+}
+
+.led-indicator.off {
+    background-color: #ff3366;
+    box-shadow: 0 0 8px #ff3366;
+}
+
+.status-text {
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+}
+
+.status-card small {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    margin-top: 4px;
+}
+
+/* --- Dashboard Principal (Grid Flexible) --- */
+.dashboard-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    width: 100%;
+    align-items: center;
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 20px;
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    backdrop-filter: blur(10px);
+}
+
+.card.ambient {
+    border: 1.5px solid var(--border-blue);
+    box-shadow: inset 0 0 20px rgba(0, 114, 255, 0.05);
+}
+
+.card.solar {
+    border: 1.5px solid var(--border-orange);
+    box-shadow: inset 0 0 20px rgba(255, 123, 0, 0.05);
+}
+
+.card-icon {
+    width: 38px;
+    height: 38px;
+}
+
+.ambient .card-icon { color: var(--blue-accent); }
+.solar .card-icon { color: var(--orange-accent); }
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.ambient .card-title { color: var(--blue-accent); }
+.solar .card-title { color: var(--orange-accent); }
+
+.temperature-value {
+    font-size: 4rem;
+    font-weight: 800;
+    display: flex;
+    align-items: flex-start;
+    line-height: 1;
+}
+
+.temperature-value span:last-child {
+    font-size: 1.8rem;
+    margin-top: 4px;
+    margin-left: 2px;
+    color: var(--text-muted);
+}
+
+.card-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    padding-top: 10px;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+/* --- Termómetro --- */
+.thermometer-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    height: 250px;
+    padding: 10px 0;
+}
+
+.thermometer-body {
+    width: 30px;
+    height: 210px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px 20px 0 0;
+    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    padding: 3px;
+}
+
+.thermometer-bulb {
+    width: 44px;
+    height: 44px;
+    background: #0072ff;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    position: absolute;
+    bottom: -28px;
+    z-index: 1;
+}
+
+.thermometer-mercury {
+    width: 100%;
+    background: linear-gradient(to top, #0072ff, #ffaa00, #ff4500);
+    border-radius: 10px 10px 0 0;
+    transition: height 0.5s ease-in-out;
+    z-index: 2;
+}
+
+.scale-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 200px;
+}
+
+.scale-mark {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.scale-line {
+    width: 8px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* --- Gráficas e Historial --- */
+.chart-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border-blue);
+    border-radius: 16px;
+    padding: 18px;
+    width: 100%;
+    backdrop-filter: blur(10px);
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.btn-excel {
+    background: #107c41;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.3s;
+}
+
+.btn-excel:hover {
+    background: #0b5c30;
+}
+
+.chart-container {
+    position: relative;
+    height: 320px;
+    width: 100%;
+}
+
+/* --- Configuración --- */
+.config-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.config-card h3 {
+    font-size: 1.1rem;
+}
+
+.config-card ul {
+    margin-top: 12px;
+    line-height: 1.8;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    padding-left: 18px;
+}
+
+/* --- Footer --- */
+footer {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    padding: 15px 0 5px 0;
+    margin-top: auto;
+}
+
+footer .highlight { color: #0072ff; }
+
+/* ===================================================
+   MEDIA QUERIES (RESPONSIVO PARA MÓVILES Y TABLETAS)
+   =================================================== */
+
+@media (max-width: 850px) {
+    .menu-toggle {
+        display: block;
+    }
+
+    nav {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: rgba(6, 11, 19, 0.95);
+        flex-direction: column;
+        padding: 15px;
+        gap: 12px;
+        border-radius: 0 0 12px 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        z-index: 100;
+    }
+
+    nav.open {
+        display: flex;
+    }
+
+    .date-text {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 8px;
+    }
+
+    .title-section h1 {
+        font-size: 1.35rem;
+    }
+
+    .control-banner {
+        flex-direction: column;
+    }
+
+    .status-card {
+        max-width: 100%;
+    }
+
+    .status-value {
+        font-size: 2.3rem;
+    }
+
+    .status-text {
+        font-size: 1.5rem;
+    }
+
+    .dashboard-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .card {
+        min-height: auto;
+        padding: 15px;
+    }
+
+    .temperature-value {
+        font-size: 3.2rem;
+        margin: 10px 0;
+    }
+
+    .thermometer-wrapper {
+        height: 210px;
+    }
+
+    .thermometer-body {
+        height: 170px;
+    }
+
+    .scale-container {
+        height: 160px;
+    }
+
+    .chart-container {
+        height: 250px;
+    }
+
+    .chart-header {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+
+    .btn-excel {
+        justify-content: center;
+        width: 100%;
+    }
+}
